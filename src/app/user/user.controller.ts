@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { userService } from "./user.service";
+import pick from "../../shared/pick";
 
 const createAdmin =  async (req: Request, res: Response) => {
     try {
@@ -22,7 +23,8 @@ const createAdmin =  async (req: Request, res: Response) => {
 
 const getAllUsers = async(req: Request, res: Response) => {
    try {
-      const result = await userService.getAllUsers(req.query);
+     const filter =  pick(req.query, ['searchTerm','name','email', 'contactNumber']);
+      const result = await userService.getAllUsers(filter);
       res.status(200).json({
          status: "success",
          message: "Users fetched successfully",

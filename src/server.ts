@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { UserRoutes } from './app/user/user.routes';
+import { AdminRoutes } from './app/Admin/admin.routes';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,6 +18,7 @@ app.listen(PORT, () => {
 });
 
 app.use('/api/v1/user', UserRoutes)
+app.use('/api/v1/admin', AdminRoutes)
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
