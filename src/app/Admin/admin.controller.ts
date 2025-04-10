@@ -7,7 +7,9 @@ import { adminSearchAbleFields } from "./admin.constant";
 const getAllAdminFromDB = async(req: Request, res: Response) => {
    try {
      const filter =  pick(req.query, adminSearchAbleFields);
-      const result = await adminService.getAllAdminUsers(filter);
+     const options = pick(req.query, ['page', 'limit', 'sortBy', 'sortOrder']);
+     console.log(options);
+      const result = await adminService.getAllAdminUsers(filter, options);
       res.status(200).json({
          status: "success",
          message: "Admin fetched successfully",
