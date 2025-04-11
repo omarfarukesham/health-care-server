@@ -5,7 +5,7 @@ import calculatePagination from "../../helpers/paginationsHelper";
 const prisma = new PrismaClient();
 
 
-
+//get all admin users data from postgresSQL db following the search, filter, pagination ... 
 const getAllAdminUsers = async (params: any, options: any) => {
   const{searchTerm, ...filterData} = params;
   const { page, limit, skip} =  calculatePagination(options);
@@ -45,10 +45,31 @@ const getAllAdminUsers = async (params: any, options: any) => {
       createdAt: 'desc'
     }
   });
-  return result;
+  return {
+    meta: {
+      page,
+      limit,
+      total: await prisma.admin.count({
+        where: whereCoditions
+      }),
+    },
+    data: result
+  }
 };
+
+
+//get signgle admin user data from postgresSQL db
+const getSingleAdminUser = async (id: string) => {
+  const result = await prisma.admin.findUnique({
+    where: {
+      id
+    }
+  });
+  return result;
+}
 
 
 export const adminService = {
     getAllAdminUsers,
+    getSingleAdminUser
 }
