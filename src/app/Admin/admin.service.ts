@@ -65,11 +65,59 @@ const getSingleAdminUser = async (id: string) => {
       id
     }
   });
+  if(!result){
+    throw new Error("Admin not found");
+  }
   return result;
+}
+
+//update admin user data in postgresSQL db
+const updateAdminUser = async (id: string, data: Prisma.AdminUpdateInput) => {
+  const result = await prisma.admin.update({
+    where: {
+      id
+    },
+    data
+  });
+  if(!result){
+    throw new Error("Admin not found");
+  }
+  return result;
+}
+
+//delete admin user data from postgresSQL db
+const deleteAdminUser = async (id: string) => {
+
+//if admin id is not available then throw a new readable msg .. 
+ await prisma.admin.findFirstOrThrow({
+  where:{
+    id
+  }
+ })
+
+ const result = await prisma.$transaction(async(transactionClient)=>{
+    const deletedAdmin =  await transactionClient.admin.delete({
+      where:{
+        id
+      }
+    })
+
+     await transactionClient.user.delete({
+      where:{
+        email: deletedAdmin.email
+      }
+    })
+    return deletedAdmin;
+ })
+ return result;
+
+
 }
 
 
 export const adminService = {
     getAllAdminUsers,
-    getSingleAdminUser
+    getSingleAdminUser,
+    updateAdminUser,
+    deleteAdminUser
 }

@@ -27,7 +27,69 @@ const getAllAdminFromDB = async(req: Request, res: Response) => {
    
 }
 
+const getSingleAdminFromDB = async(req: Request, res: Response) => {
+   try {
+      const { id } = req.params;
+      console.log(id)
+      const result = await adminService.getSingleAdminUser(id);
+      res.status(200).json({
+         status: "success",
+         message: "Single Admin info successfully",
+         data: result,
+      });
+   }
+   catch (error: any) {
+      res.status(500).json({
+         status: "error",
+         message: error?.name || "Internal server error",
+         error: error.message,
+      });
+   }
+}
+
+const updateAdminFromDB = async(req: Request, res: Response) => {
+   try {
+      const { id } = req.params;
+      const data = req.body;
+      const result = await adminService.updateAdminUser(id, data);
+      res.status(200).json({
+         status: "success",
+         message: "Admin updated successfully",
+         data: result,
+      });
+   }
+   catch (error: any) {
+      res.status(500).json({  
+         status: "error",
+         message: error?.name || "Internal server error",
+         error: error.message,
+      });
+   }
+}
+
+
+const deleteAdminFromDB = async(req: Request, res: Response) => {
+   try {
+      const { id } = req.params;
+      const result = await adminService.deleteAdminUser(id);
+      res.status(200).json({
+         status: "success",
+         message: "Admin deleted successfully",
+         data: result,
+      });
+   }
+   catch (error: any) {
+      res.status(500).json({
+         status: "error",
+         message: error?.name || "Internal server error",
+         error: error.message,
+      });
+   }
+}
 
 export const AdminController = {
-    getAllAdminFromDB
+    getAllAdminFromDB,
+    getSingleAdminFromDB,
+    updateAdminFromDB,
+    deleteAdminFromDB
 }
