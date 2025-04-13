@@ -2,6 +2,8 @@ import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import router from './app/routes';
 import globlalErrorHandler from './globalErrorHandler/globalErrorHandler';
+import path from 'path';
+import httpStatus from 'http-status';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -18,8 +20,23 @@ app.listen(PORT, () => {
 });
 
 app.use('/api/v1', router);
-
 app.use(globlalErrorHandler)
+
+app.use((req: Request, res: Response, next: NextFunction) => {
+  res.status(httpStatus.NOT_FOUND).json({
+    status: 'error',
+    message: 'Api not Found',
+    error:{
+      path: req.originalUrl,
+      method: req.method,
+      timestamp: new Date().toISOString(),
+      statusCode: httpStatus.BAD_REQUEST,
+    }
+  
+  });
+  next();
+});
+
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
