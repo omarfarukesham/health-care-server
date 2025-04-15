@@ -1,4 +1,3 @@
-import jwt, { JwtPayload } from 'jsonwebtoken';
 
 import prisma from "../../shared/prisma";
 import * as bycript from "bcrypt";
