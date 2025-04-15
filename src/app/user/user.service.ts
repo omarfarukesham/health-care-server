@@ -1,12 +1,14 @@
 import { Prisma, PrismaClient, UserRole } from "@prisma/client";
 import { searchAbleFields } from "./user.constant";
+import * as bycript from "bcrypt";
 
 const prisma = new PrismaClient();
 
 const createAdmin = async (data: any) => {
+  const hashedPassword = await bycript.hash(data.password, 10);
   const userData = {
     email: data.admin.email,
-    password: data.password,
+    password: hashedPassword,
     role: UserRole.ADMIN,
     };
    
@@ -29,10 +31,9 @@ const createAdmin = async (data: any) => {
 const getAllUsers = async (params: any) => {
   const{searchTerm, ...filterData} = params;
 
-  const andContions:Prisma.AdminWhereInput[] = [];
+  const andContions:Prisma.UserWhereInput[] = [];
   // const searchAbleFields = ['name', 'email'];
 
-  console.log(filterData)
   if(params.searchTerm){
     andContions.push( {
       OR:searchAbleFields.map((field) => ({
@@ -55,8 +56,8 @@ const getAllUsers = async (params: any) => {
     })
   }
 
-  const whereCoditions : Prisma.AdminWhereInput = {AND: andContions}
-  const result = await prisma.admin.findMany({
+  const whereCoditions : Prisma.UserWhereInput = {AND: andContions}
+  const result = await prisma.user.findMany({
     where: whereCoditions 
   });
   return result;

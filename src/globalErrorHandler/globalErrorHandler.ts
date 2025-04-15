@@ -4,7 +4,7 @@ import httpStatus from "http-status"
 const globlalErrorHandler = (err: any, req: Request, res:Response, next:NextFunction)=>{
     res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: err.name || 'Internal Server Error',
+      message: err.message || 'Internal Server Error',
       error: err
     })
   }
