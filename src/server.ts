@@ -4,12 +4,14 @@ import router from './app/routes';
 import globlalErrorHandler from './globalErrorHandler/globalErrorHandler';
 import path from 'path';
 import httpStatus from 'http-status';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || 'localhost';
 
 app.use(cors())
+app.use(cookieParser())
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))

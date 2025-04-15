@@ -21,13 +21,32 @@ const loginUser: RequestHandler = catchAsync(async (req, res) => {
         data: {
             accessToken: result.accessToken,
             needPasswordChange: result.needPasswordChange,  
-            
+
         },
 })
 }
 );
 
+const refreshToken: RequestHandler = catchAsync(async (req, res) => {
+    console.log("refreshToken", req.cookies);
+    const { refreshToken } = req.cookies;
+    const result = await AuthService.refreshToken(refreshToken);
+
+    // res.cookie("refreshToken", result.refreshToken, {
+    //     httpOnly: true,
+    //     secure: true,
+    // });
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "User logged in successfully",
+        data: result
+    });
+}
+);
 
 export const AuthController = {
-    loginUser
+    loginUser, 
+    refreshToken
 };
