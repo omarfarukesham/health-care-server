@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import ApiError from "../apiError/ApiError";
 import httpStatus from "http-status";
 import { jwtHelper } from "../../helpers/jwtHelper";
-import { config } from "dotenv";
+
 
 const auth =(...roles: string[]) => {
     return async(req: Request, res: Response, next: NextFunction) => {
@@ -13,6 +13,10 @@ const auth =(...roles: string[]) => {
             }
 
             const verifedUser =  jwtHelper.verfiyToken(token );
+            if(!verifedUser) {
+                throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authorized");
+            }
+            req.user = verifedUser; 
            
             if(roles.length && !roles.includes(verifedUser.role)){
                 throw new ApiError(httpStatus.NOT_FOUND, 'Your token is not verified!!')

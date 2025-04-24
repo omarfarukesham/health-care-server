@@ -71,7 +71,13 @@ const refreshToken = async(token: string)=>{
    return isUserExist
 }
 
+const changePassword = async()=> {
+  console.log('change password')
+}
+
+
 export const AuthService = {
     loginUser,
-    refreshToken
+    refreshToken,
+    changePassword
 }
