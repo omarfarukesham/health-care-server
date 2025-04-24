@@ -5,7 +5,7 @@ import { jwtHelper } from "../../helpers/jwtHelper";
 
 
 const auth =(...roles: string[]) => {
-    return async(req: Request, res: Response, next: NextFunction) => {
+    return async(req: Request & {user?: any}, res: Response, next: NextFunction) => {
        try {
            const token = req.headers.authorization;
             if(!token) {
@@ -17,6 +17,7 @@ const auth =(...roles: string[]) => {
                 throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authorized");
             }
             req.user = verifedUser; 
+            // console.log('verifedUser', verifedUser)
            
             if(roles.length && !roles.includes(verifedUser.role)){
                 throw new ApiError(httpStatus.NOT_FOUND, 'Your token is not verified!!')
