@@ -17,7 +17,6 @@ const auth =(...roles: string[]) => {
                 throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authorized");
             }
             req.user = verifedUser; 
-            // console.log('verifedUser', verifedUser)
            
             if(roles.length && !roles.includes(verifedUser.role)){
                 throw new ApiError(httpStatus.NOT_FOUND, 'Your token is not verified!!')

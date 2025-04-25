@@ -1,5 +1,13 @@
 import multer from "multer";
 import path from "path";
+import {v2 as cloudinary} from "cloudinary";
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,  
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+    secure: true
+});
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -12,7 +20,20 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+const uploadToCloudinary = async (filePath: string) => {
+    try {
+        const result = await cloudinary.uploader.upload(filePath, {
+            folder: "uploads",
+            resource_type: "auto"
+        });
+        return result.secure_url;
+    } catch (error) {
+        throw new Error("Error uploading to Cloudinary: " + (error instanceof Error ? error.message : "Unknown error"));
+    }
+};
+
 
 export const fileUloader  = {
-    upload
+    upload,
+    uploadToCloudinary
 };

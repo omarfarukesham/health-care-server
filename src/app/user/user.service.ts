@@ -1,13 +1,21 @@
 import { Prisma, PrismaClient, UserRole } from "@prisma/client";
 import { searchAbleFields } from "./user.constant";
 import * as bycript from "bcrypt";
+import { fileUloader } from "../../helpers/imageUploader";
 
 const prisma = new PrismaClient();
 
-const createAdmin = async (data: any) => {
-  const hashedPassword = await bycript.hash(data.password, 10);
+const createAdmin = async (req: any) => {
+
+  const file = req.file;
+  if (file) {
+    let uploadeToCloudinary = await fileUloader.uploadToCloudinary(file.path);
+    req.body.admin.profilePhoto = uploadeToCloudinary;
+  }
+ 
+  const hashedPassword = await bycript.hash(req.body.password, 10);
   const userData = {
-    email: data.admin.email,
+    email: req.body.admin.email,
     password: hashedPassword,
     role: UserRole.ADMIN,
     };
@@ -18,7 +26,7 @@ const createAdmin = async (data: any) => {
       });
 
       const createAdmin = await transctionClient.admin.create({
-        data: data.admin,
+        data: req.body.admin,
       });
 
       return createAdmin

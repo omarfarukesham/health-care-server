@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { userService } from "./user.service";
 import pick from "../../shared/pick";
 
-const createAdmin =  async (req: Request, res: Response) => {
+const createAdmin =  async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const result = await userService.createAdmin(req.body);
+        const result = await userService.createAdmin(req);
         res.status(200).json({
             status: "success",
             message: "Admin created successfully",
