@@ -21,6 +21,27 @@ const createAdmin =  async (req: Request, res: Response, next: NextFunction) => 
    
 }
 
+const createDoctor =  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const result = await userService.createDoctor(req);
+        res.status(200).json({
+            status: "success",
+            message: "Doctor created successfully",
+            data: result,
+        });
+    }
+
+    catch (error: any) {
+        res.status(500).json({
+            status: "error",
+            message: error?.name || "Internal server error",
+            error: error.message,
+        });
+    }
+   
+}
+
+
 const getAllUsers = async(req: Request, res: Response) => {
    try {
      const filter =  pick(req.query, ['searchTerm','name','email', 'contactNumber']);
@@ -44,5 +65,6 @@ const getAllUsers = async(req: Request, res: Response) => {
 
 export const UserController = {
     createAdmin,
+    createDoctor,
     getAllUsers
 }
