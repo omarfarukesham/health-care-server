@@ -59,14 +59,14 @@ const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
     const filters = pick(req.query, userFilterableFields);
     const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder'])
 
-    const result = await userService.getAllUsers({ ...filters, ...options })
+    const result = await userService.getAllFromDB(filters, options);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
         message: "Users data fetched!",
-  
-        data: result || []
+        meta: result.meta,
+        data: result.data || []
     })
 });
 
