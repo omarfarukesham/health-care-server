@@ -4,6 +4,7 @@ import pick from "../../shared/pick";
 import catchAsync from "../../shared/catchAsync";
 import sendResponse from "../../shared/sendResponse";
 import httpStatus from "http-status";
+import { userFilterableFields } from "./user.constant";
 
 const createAdmin =  async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -54,6 +55,20 @@ const createPatient = catchAsync(async (req: Request, res: Response) => {
     })
 });
 
+const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
+    const filters = pick(req.query, userFilterableFields);
+    const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder'])
+
+    const result = await userService.getAllUsers({ ...filters, ...options })
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Users data fetched!",
+  
+        data: result || []
+    })
+});
 
 const getAllUsers = async(req: Request, res: Response) => {
    try {
@@ -81,5 +96,6 @@ export const UserController = {
     createAdmin,
     createDoctor,
     createPatient,
-    getAllUsers
+    getAllUsers,
+    getAllFromDB
 }
