@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { userService } from "./user.service";
 import pick from "../../shared/pick";
+import catchAsync from "../../shared/catchAsync";
+import sendResponse from "../../shared/sendResponse";
+import httpStatus from "http-status";
 
 const createAdmin =  async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -41,6 +44,16 @@ const createDoctor =  async (req: Request, res: Response, next: NextFunction) =>
    
 }
 
+const createPatient = catchAsync(async (req: Request, res: Response) => {
+    const result = await userService.createPatient(req);
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Patient Created successfuly!",
+        data: result
+    })
+});
+
 
 const getAllUsers = async(req: Request, res: Response) => {
    try {
@@ -63,8 +76,10 @@ const getAllUsers = async(req: Request, res: Response) => {
 }
 
 
+
 export const UserController = {
     createAdmin,
     createDoctor,
+    createPatient,
     getAllUsers
 }

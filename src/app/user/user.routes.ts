@@ -10,6 +10,7 @@ const router = express.Router();
 
 
 router.get("/",  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),  UserController.getAllUsers);
+
 router.post(
     "/", 
     // auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
@@ -19,7 +20,6 @@ router.post(
        return  UserController.createAdmin(req, res, next);
      }
 );
-
 
 router.post(
     "/create-doctor", 
@@ -31,5 +31,13 @@ router.post(
      }
 );
  
+router.post(
+  "/create-patient",
+  fileUloader.upload.single('file'),
+  (req: Request, res: Response, next: NextFunction) => {
+      req.body = userValidation.createPatient.parse(JSON.parse(req.body.data))
+      return UserController.createPatient(req, res, next)
+  }
+);
 
 export const UserRoutes = router;
