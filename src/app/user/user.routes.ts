@@ -40,4 +40,6 @@ router.post(
   }
 );
 
+router.patch("/:id/status", auth(UserRole.ADMIN, UserRole.SUPER_ADMIN), UserController.changeProfileStatus);
+
 export const UserRoutes = router;

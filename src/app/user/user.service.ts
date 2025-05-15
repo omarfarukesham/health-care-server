@@ -136,7 +136,6 @@ const getAllUsers = async (params: any) => {
   return result;
 };
 
-
 const getAllFromDB = async (params: any, options: IPaginationOptions) => {
   const { page, limit, skip } = paginationHelper.calculatePagination(options);
   const { searchTerm, ...filterData } = params;
@@ -204,9 +203,23 @@ const getAllFromDB = async (params: any, options: IPaginationOptions) => {
   };
 };
 
-const changeProfileStatus= async (id: string, status: string) => {
-  console.log(id, status)
-}
+const changeProfileStatus= async (id: string, status: UserRole) => {
+  const result = await prisma.user.findFirstOrThrow({
+    where: {
+      id
+    }
+   
+  });
+  const updateUser = await prisma.user.update({
+    where: {  
+      id: result.id
+    },
+    data: status
+    
+  });
+
+  return updateUser;
+};
 
 const getMyProfile = async (id: string) => {
   console.log(id)
