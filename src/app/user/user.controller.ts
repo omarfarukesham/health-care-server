@@ -54,7 +54,7 @@ const createPatient = catchAsync(async (req: Request, res: Response) => {
         data: result
     })
 });
-
+ 
 const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
     const filters = pick(req.query, userFilterableFields);
     const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder'])
@@ -89,8 +89,6 @@ const getAllUsers = async(req: Request, res: Response) => {
    }
    
 }
-
-
 
 export const UserController = {
     createAdmin,
