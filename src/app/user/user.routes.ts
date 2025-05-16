@@ -7,15 +7,17 @@ import { fileUploader } from "../../helpers/imageUploader";
 
 const router = express.Router();
 
-router.get("/", 
+router.get(
+  "/", 
   auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),  
-  UserController.getAllUserFromDB);
+  UserController.getAllUserFromDB
+);
 
-
-router.get("/me",
+router.get(
+  "/me",
    auth(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.DOCTOR, UserRole.PATIENT),  
     UserController.getProfile
-  );
+);
 
 router.post(
     "/", 
@@ -46,12 +48,14 @@ router.post(
   }
 );
 
-router.patch("/:id/status", 
+router.patch(
+  "/:id/status", 
   auth(UserRole.ADMIN, UserRole.SUPER_ADMIN), 
   UserController.changeProfileStatus
 );
 
-router.patch("/update-profile", 
+router.patch(
+  "/update-profile", 
     auth(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.DOCTOR, UserRole.PATIENT),  
       fileUploader.upload.single('file'),
     (req:Request, res:Response, next:NextFunction) => {
@@ -59,4 +63,6 @@ router.patch("/update-profile",
        return  UserController.updateMyProfile(req, res, next);
      }
 );
+
+
 export const UserRoutes = router;

@@ -71,7 +71,6 @@ const getAllUserFromDB = catchAsync(async (req: Request, res: Response) => {
     })
 });
 
-
 const getProfile =catchAsync(async (req: Request & { user?: IAuthUser }, res: Response) => {
     const user = req.user;
     const result = await userService.getMyProfile(user as IAuthUser);
