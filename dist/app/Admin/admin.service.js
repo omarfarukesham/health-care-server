@@ -19,21 +19,17 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.adminService = void 0;
 const client_1 = require("@prisma/client");
 const admin_constant_1 = require("./admin.constant");
-const paginationsHelper_1 = __importDefault(require("../../helpers/paginationsHelper"));
+const paginationsHelper_1 = require("../../helpers/paginationsHelper");
 const prisma = new client_1.PrismaClient();
 //get all admin users data from postgresSQL db following the search, filter, pagination ... 
 const getAllAdminUsers = (params, options) => __awaiter(void 0, void 0, void 0, function* () {
+    const { page, limit, skip } = paginationsHelper_1.paginationHelper.calculatePagination(options);
     const { searchTerm } = params, filterData = __rest(params, ["searchTerm"]);
-    const { page, limit, skip } = (0, paginationsHelper_1.default)(options);
     const andContions = [];
-    // const searchAbleFields = ['name', 'email'];
     if (params.searchTerm) {
         andContions.push({
             OR: admin_constant_1.searchAbleFields.map((field) => ({
@@ -62,8 +58,8 @@ const getAllAdminUsers = (params, options) => __awaiter(void 0, void 0, void 0, 
         where: whereCoditions,
         skip,
         take: limit,
-        orderBy: options.sortBy && options.sortOder ? {
-            [options.sortBy]: options.sortOder
+        orderBy: options.sortBy && options.sortOrder ? {
+            [options.sortBy]: options.sortOrder
         } : {
             createdAt: 'desc'
         }

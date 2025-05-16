@@ -62,10 +62,10 @@ const createPatient = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
         data: result
     });
 }));
-const getAllFromDB = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getAllUserFromDB = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const filters = (0, pick_1.default)(req.query, user_constant_1.userFilterableFields);
     const options = (0, pick_1.default)(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
-    const result = yield user_service_1.userService.getAllFromDB(filters, options);
+    const result = yield user_service_1.userService.getAllUserFromDB(filters, options);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
@@ -74,28 +74,42 @@ const getAllFromDB = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, v
         data: result.data || []
     });
 }));
-const getAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const filter = (0, pick_1.default)(req.query, ['searchTerm', 'name', 'email', 'contactNumber']);
-        const result = yield user_service_1.userService.getAllUsers(filter);
-        res.status(200).json({
-            status: "success",
-            message: "Users fetched successfully",
-            data: result,
-        });
-    }
-    catch (error) {
-        res.status(500).json({
-            status: "error",
-            message: (error === null || error === void 0 ? void 0 : error.name) || "Internal server error",
-            error: error.message,
-        });
-    }
-});
+const getProfile = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const result = yield user_service_1.userService.getMyProfile(user);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "User profile fetched successfully!",
+        data: result
+    });
+}));
+const updateMyProfile = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const result = yield user_service_1.userService.updateMyProfile(user, req);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "My profile updated!",
+        data: result
+    });
+}));
+const changeProfileStatus = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const result = yield user_service_1.userService.changeProfileStatus(id, req.body);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "Profile status changed successfully!",
+        data: result
+    });
+}));
 exports.UserController = {
     createAdmin,
     createDoctor,
     createPatient,
-    getAllUsers,
-    getAllFromDB
+    changeProfileStatus,
+    getAllUserFromDB,
+    getProfile,
+    updateMyProfile
 };

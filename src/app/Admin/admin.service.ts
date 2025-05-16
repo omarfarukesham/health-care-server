@@ -1,23 +1,16 @@
 import { Admin, Prisma, PrismaClient, UserRole, UserStatus } from "@prisma/client";
 import { searchAbleFields } from "./admin.constant";
-import calculatePagination from "../../helpers/paginationsHelper";
 import { IadminFilterRequest } from "./admin.interface";
 import { IPaginationOptions } from "../interfaces/pagination";
+import { paginationHelper } from "../../helpers/paginationsHelper";
 
 const prisma = new PrismaClient();
 
-interface AdminFilterData {
-  name?: string;
-  email?: string;
-  role?: string;
-  contactNumber?: string;
-}
 //get all admin users data from postgresSQL db following the search, filter, pagination ... 
 const getAllAdminUsers = async (params: IadminFilterRequest, options: IPaginationOptions) => {
+  const { page, limit, skip} = paginationHelper.calculatePagination(options);
   const{searchTerm, ...filterData} = params;
-  const { page, limit, skip} =  calculatePagination(options);
   const andContions:Prisma.AdminWhereInput[] = [];
-  // const searchAbleFields = ['name', 'email'];
 
   if(params.searchTerm){
     andContions.push( {
@@ -50,8 +43,8 @@ const getAllAdminUsers = async (params: IadminFilterRequest, options: IPaginatio
     where: whereCoditions,
     skip,
     take: limit,
-    orderBy: options.sortBy && options.sortOder ? {
-      [options.sortBy]: options.sortOder
+    orderBy: options.sortBy && options.sortOrder ? {
+      [options.sortBy]: options.sortOrder
     } : {
       createdAt: 'desc'
     }

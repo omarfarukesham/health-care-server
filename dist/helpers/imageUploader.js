@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fileUloader = void 0;
+exports.fileUploader = void 0;
 const multer_1 = __importDefault(require("multer"));
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
@@ -28,21 +28,10 @@ const storage = multer_1.default.diskStorage({
         cb(null, path_1.default.join(process.cwd(), 'uploads'));
     },
     filename: function (req, file, cb) {
-        cb(null, Date.now() + "-" + file.originalname);
+        cb(null, file.originalname);
     }
 });
 const upload = (0, multer_1.default)({ storage: storage });
-// const uploadToCloudinary = async (filePath: string) => {
-//     try {
-//         const result = await cloudinary.uploader.upload(filePath, {
-//             folder: "uploads",
-//             resource_type: "auto"
-//         });
-//         return result.secure_url;
-//     } catch (error) {
-//         throw new Error("Error uploading to Cloudinary: " + (error instanceof Error ? error.message : "Unknown error"));
-//     }
-// };
 const uploadToCloudinary = (file) => __awaiter(void 0, void 0, void 0, function* () {
     return new Promise((resolve, reject) => {
         cloudinary_1.v2.uploader.upload(file.path, (error, result) => {
@@ -56,7 +45,7 @@ const uploadToCloudinary = (file) => __awaiter(void 0, void 0, void 0, function*
         });
     });
 });
-exports.fileUloader = {
+exports.fileUploader = {
     upload,
     uploadToCloudinary
 };
