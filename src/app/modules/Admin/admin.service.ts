@@ -1,8 +1,8 @@
 import { Admin, Prisma, PrismaClient, UserRole, UserStatus } from "@prisma/client";
 import { searchAbleFields } from "./admin.constant";
 import { IadminFilterRequest } from "./admin.interface";
-import { IPaginationOptions } from "../interfaces/pagination";
-import { paginationHelper } from "../../helpers/paginationsHelper";
+import { IPaginationOptions } from "../../interfaces/pagination";
+import { paginationHelper } from "../../../helpers/paginationsHelper";
 
 const prisma = new PrismaClient();
 

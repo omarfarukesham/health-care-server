@@ -1,11 +1,11 @@
 import {  Prisma, PrismaClient, UserRole, UserStatus } from "@prisma/client";
 import {  userSearchAbleFields } from "./user.constant";
 import * as bycript from "bcrypt";
-import { IPaginationOptions } from "../interfaces/pagination";
-import { paginationHelper } from "../../helpers/paginationsHelper";
-import { IFile } from "../interfaces/file";
-import { IAuthUser } from "../interfaces/common";
-import { fileUploader } from "../../helpers/imageUploader";
+import { IPaginationOptions } from "../../interfaces/pagination";
+import { paginationHelper } from "../../../helpers/paginationsHelper";
+import { IFile } from "../../interfaces/file";
+import { IAuthUser } from "../../interfaces/common";
+import { fileUploader } from "../../../helpers/imageUploader";
 
 const prisma = new PrismaClient();
 

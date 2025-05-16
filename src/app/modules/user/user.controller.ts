@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { userService } from "./user.service";
-import pick from "../../shared/pick";
-import catchAsync from "../../shared/catchAsync";
-import sendResponse from "../../shared/sendResponse";
+import pick from "../../../shared/pick";
+import catchAsync from "../../../shared/catchAsync";
+import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
 import { userFilterableFields } from "./user.constant";
-import { IAuthUser } from "../interfaces/common";
+import { IAuthUser } from "../../interfaces/common";
 
 const createAdmin =  async (req: Request, res: Response, next: NextFunction) => {
     try {

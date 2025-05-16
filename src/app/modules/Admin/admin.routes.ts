@@ -1,11 +1,10 @@
 import  express  from "express";
 const router = express.Router();
 import { AdminController } from "./admin.controller";
-import { AnyZodObject, z } from "zod";
-import validateRequest from "../middlewares/validateRequest";
+import validateRequest from "../../middlewares/validateRequest";
 import { AdminValidation } from "./admin.validations";
-import auth from "../middlewares/auth";
 import { UserRole } from "@prisma/client";
+import auth from "../../middlewares/auth";
 
 
 router.get(

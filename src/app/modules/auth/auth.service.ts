@@ -1,10 +1,10 @@
 
-import prisma from "../../shared/prisma";
+import prisma from "../../../shared/prisma";
 import * as bycript from "bcrypt";
-import { jwtHelper } from '../../helpers/jwtHelper';
+import { jwtHelper } from '../../../helpers/jwtHelper';
 import { UserStatus } from '@prisma/client';
 import emailSender from "./sendEmail";
-import ApiError from "../apiError/ApiError";
+import ApiError from "../../apiError/ApiError";
 import httpStatus from "http-status";
 
 
