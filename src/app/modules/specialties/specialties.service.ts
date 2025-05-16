@@ -21,7 +21,22 @@ const insertIntoDB = async (req: Request & {file?: IFile}) => {
 
 }
 
+const getAllSpecialty = async () => {
+    const result = await prisma.specialties.findMany();
+    return result;
+}  
+
+const deleteSpecialty = async (id: string) => {
+    const result = await prisma.specialties.delete({    
+        where: {
+            id
+        }
+    });
+    return result;
+}
 
 export const SpecialtyService = {
   insertIntoDB, 
+  getAllSpecialty,
+  deleteSpecialty
 }

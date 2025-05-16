@@ -15,6 +15,15 @@ router.post(
        return SpecialtyController.createSpecialty(req, res, next);
      }
 );
+router.get(
+    '/', 
+    SpecialtyController.getAllSpecialty
+);
+
+router.delete(
+    '/:id',
+    SpecialtyController.deleteSpecialty
+);
 
 
 
