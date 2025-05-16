@@ -1,9 +1,11 @@
-import { Patient, Prisma, PrismaClient, UserRole } from "@prisma/client";
-import { searchAbleFields, userSearchAbleFields } from "./user.constant";
+import {  Prisma, PrismaClient, UserRole, UserStatus } from "@prisma/client";
+import {  userSearchAbleFields } from "./user.constant";
 import * as bycript from "bcrypt";
-import { fileUloader } from "../../helpers/imageUploader";
 import { IPaginationOptions } from "../interfaces/pagination";
 import { paginationHelper } from "../../helpers/paginationsHelper";
+import { IFile } from "../interfaces/file";
+import { IAuthUser } from "../interfaces/common";
+import { fileUploader } from "../../helpers/imageUploader";
 
 const prisma = new PrismaClient();
 
@@ -11,7 +13,7 @@ const createAdmin = async (req: any) => {
 
   const file = req.file;
   if (file) {
-    let uploadeToCloudinary = await fileUloader.uploadToCloudinary(file.path);
+    let uploadeToCloudinary = await fileUploader.uploadToCloudinary(file.path);
     req.body.admin.profilePhoto = uploadeToCloudinary;
   }
  
@@ -41,7 +43,7 @@ const createAdmin = async (req: any) => {
 const createDoctor = async (req: any) => {
   const file = req.file;
   if (file) {
-    let uploadeToCloudinary = await fileUloader.uploadToCloudinary(file.path);
+    let uploadeToCloudinary = await fileUploader.uploadToCloudinary(file.path);
     req.body.doctor.profilePhoto = uploadeToCloudinary;
   }
  
@@ -72,7 +74,7 @@ const createPatient = async (req: any) => {
   const file = req.file
   
   if (file) {
-      const uploadedProfileImage = await fileUloader.uploadToCloudinary(file);
+      const uploadedProfileImage = await fileUploader.uploadToCloudinary(file);
       req.body.patient.profilePhoto = uploadedProfileImage?.secure_url
       console.log(uploadedProfileImage)
   }
@@ -101,42 +103,7 @@ const createPatient = async (req: any) => {
   return result;
 };
 
-const getAllUsers = async (params: any) => {
-  const{searchTerm, ...filterData} = params;
-
-  const andContions:Prisma.UserWhereInput[] = [];
-  // const searchAbleFields = ['name', 'email'];
-
-  if(params.searchTerm){
-    andContions.push( {
-      OR:searchAbleFields.map((field) => ({
-        [field]: {
-          contains: params.searchTerm,
-          mode: 'insensitive',
-        }
-      }))
-    },)
-  }
-
-  if(Object.keys(filterData).length){
-    andContions.push({
-      AND: Object.keys(filterData).map((key) => ({
-        [key]: {
-          equals: filterData[key]
-          
-        }
-      }))
-    })
-  }
-
-  const whereCoditions : Prisma.UserWhereInput = {AND: andContions}
-  const result = await prisma.user.findMany({
-    where: whereCoditions 
-  });
-  return result;
-};
-
-const getAllFromDB = async (params: any, options: IPaginationOptions) => {
+const getAllUserFromDB = async (params: any, options: IPaginationOptions) => {
   const { page, limit, skip } = paginationHelper.calculatePagination(options);
   const { searchTerm, ...filterData } = params;
 
@@ -221,17 +188,116 @@ const changeProfileStatus= async (id: string, status: UserRole) => {
   return updateUser;
 };
 
-const getMyProfile = async (id: string) => {
-  console.log(id)
+const getMyProfile = async (user:any) => {
+const userData = await prisma.user.findUniqueOrThrow({
+  where: {  
+    email: user.email
+  }, 
+  select:{
+    id: true, 
+    email: true, 
+    needPasswordChange: true,
+    role: true,
+    status: true
+
+  }
+})
+  
+if(userData.role === UserRole.ADMIN) {
+  const admin = await prisma.admin.findUniqueOrThrow({
+    where: {
+      email: userData.email
+    }
+  });
+  return { ...userData, admin };
 }
 
+if(userData.role === UserRole.SUPER_ADMIN) {
+  const superAdmin = await prisma.user.findUniqueOrThrow({
+    where: {
+      email: userData.email
+    }
+  });
+  return { ...userData, superAdmin };
+}
+
+if(userData.role === UserRole.PATIENT) {
+  const patient = await prisma.patient.findUniqueOrThrow({
+    where: {
+      email: userData.email
+    }
+  });
+  return { ...userData, patient };
+}
+
+if(userData.role === UserRole.DOCTOR) {
+  const doctor = await prisma.doctor.findUniqueOrThrow({
+    where: {
+      email: userData.email
+    }
+  });
+  return { ...userData, doctor };
+}
+}
+
+const updateMyProfile =  async (user: IAuthUser, req: any) => {
+    const userInfo = await prisma.user.findUniqueOrThrow({
+        where: {
+            email: user?.email,
+            status: UserStatus.ACTIVE
+        }
+    });
+
+    const file = req.file as IFile;
+    if (file) {
+        const uploadToCloudinary = await fileUploader.uploadToCloudinary(file);
+        req.body.profilePhoto = uploadToCloudinary?.secure_url;
+    }
+
+    let profileInfo;
+
+    if (userInfo.role === UserRole.SUPER_ADMIN) {
+        profileInfo = await prisma.admin.update({
+            where: {
+                email: userInfo.email
+            },
+            data: req.body
+        })
+    }
+    else if (userInfo.role === UserRole.ADMIN) {
+        profileInfo = await prisma.admin.update({
+            where: {
+                email: userInfo.email
+            },
+            data: req.body
+        })
+    }
+    else if (userInfo.role === UserRole.DOCTOR) {
+        profileInfo = await prisma.doctor.update({
+            where: {
+                email: userInfo.email
+            },
+            data: req.body
+        })
+    }
+    else if (userInfo.role === UserRole.PATIENT) {
+        profileInfo = await prisma.patient.update({
+            where: {
+                email: userInfo.email
+            },
+            data: req.body
+        })
+    }
+
+    return { ...profileInfo };
+}
 
 export const userService = {
     createAdmin,
     createDoctor,
     createPatient,
-    getAllUsers,
-    getAllFromDB,
+    getAllUserFromDB,
     getMyProfile,
-    changeProfileStatus
+    changeProfileStatus,
+    updateMyProfile
 }

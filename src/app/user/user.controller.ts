@@ -5,6 +5,7 @@ import catchAsync from "../../shared/catchAsync";
 import sendResponse from "../../shared/sendResponse";
 import httpStatus from "http-status";
 import { userFilterableFields } from "./user.constant";
+import { IAuthUser } from "../interfaces/common";
 
 const createAdmin =  async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -55,11 +56,11 @@ const createPatient = catchAsync(async (req: Request, res: Response) => {
     })
 });
  
-const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
+const getAllUserFromDB = catchAsync(async (req: Request, res: Response) => {
     const filters = pick(req.query, userFilterableFields);
     const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder'])
 
-    const result = await userService.getAllFromDB(filters, options);
+    const result = await userService.getAllUserFromDB(filters, options);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
@@ -70,25 +71,31 @@ const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
     })
 });
 
-const getAllUsers = async(req: Request, res: Response) => {
-   try {
-     const filter =  pick(req.query, ['searchTerm','name','email', 'contactNumber']);
-      const result = await userService.getAllUsers(filter);
-      res.status(200).json({
-         status: "success",
-         message: "Users fetched successfully",
-         data: result,
-      });
-   }
-   catch (error: any) {
-      res.status(500).json({
-         status: "error",
-         message: error?.name || "Internal server error",
-         error: error.message,
-      });
-   }
-   
-}
+
+const getProfile =catchAsync(async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const user = req.user;
+    const result = await userService.getMyProfile(user as IAuthUser);
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "User profile fetched successfully!",
+        data: result
+    })
+})
+
+const updateMyProfile =  catchAsync(async (req: Request & { user?: IAuthUser }, res: Response) => {
+
+    const user = req.user;
+
+    const result = await userService.updateMyProfile(user as IAuthUser, req);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "My profile updated!",
+        data: result
+    })
+});
 
 const changeProfileStatus = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -107,6 +114,7 @@ export const UserController = {
     createDoctor,
     createPatient,
     changeProfileStatus,
-    getAllUsers,
-    getAllFromDB
+    getAllUserFromDB,
+    getProfile,
+    updateMyProfile
 }
