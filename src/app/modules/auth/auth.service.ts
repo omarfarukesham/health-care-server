@@ -1,4 +1,3 @@
-
 import prisma from "../../../shared/prisma";
 import * as bycript from "bcrypt";
 import { jwtHelper } from '../../../helpers/jwtHelper';

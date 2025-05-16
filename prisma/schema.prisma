@@ -120,7 +120,6 @@ model PatientHealthData {
 
 model Specialties {
   id        String   @id @default(uuid())
-  name      String
   title     String
   icon      String
   createdAt DateTime @default(now())
